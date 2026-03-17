@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRANSFER MADNESS 2026 — PRIZE BOARD</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:#05050D;color:#fff;font-family:'Barlow Condensed',sans-serif;height:100vh;width:100vw;}
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.bg-court{position:absolute;inset:0;background:
+  radial-gradient(ellipse 70% 50% at 50% 100%,rgba(255,107,0,0.12) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 40% at 50% 0%,rgba(255,184,0,0.06) 0%,transparent 60%);}
+.bg-lines{position:absolute;inset:0;opacity:0.03;
+  background-image:linear-gradient(0deg,#FF6B00 1px,transparent 1px),linear-gradient(90deg,#FF6B00 1px,transparent 1px);
+  background-size:55px 55px;}
+.ball{position:absolute;opacity:0.06;animation:floatBall linear infinite;}
+@keyframes floatBall{0%{transform:translateY(110vh) rotate(0deg);opacity:0;}10%{opacity:0.06;}90%{opacity:0.06;}100%{transform:translateY(-20vh) rotate(720deg);opacity:0;}}
+
+.wrap{position:relative;z-index:1;height:100vh;width:100vw;display:flex;flex-direction:column;padding:20px 28px 16px;gap:12px;}
+
+/* HEADER */
+.top-banner{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;flex-shrink:0;position:relative;}
+.top-banner::after{content:'';position:absolute;bottom:-6px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#FF6B00,#FFB800,#FF6B00,transparent);}
+.eyebrow{font-family:'Bebas Neue',sans-serif;font-size:clamp(0.75rem,1.1vw,1rem);letter-spacing:8px;color:#FFB800;}
+.main-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,8vw,8rem);letter-spacing:6px;line-height:0.9;
+  color:#FF6B00;text-shadow:0 0 40px rgba(255,107,0,0.5),0 0 80px rgba(255,184,0,0.3);
+  animation:titlePulse 3s ease-in-out infinite;}
+@keyframes titlePulse{0%,100%{text-shadow:0 0 30px rgba(255,107,0,0.4);}50%{text-shadow:0 0 60px rgba(255,184,0,0.7),0 0 30px rgba(255,107,0,0.6);}}
+.subtitle{font-size:clamp(0.7rem,1vw,0.9rem);letter-spacing:5px;color:rgba(255,255,255,0.35);}
+
+/* PRIZE SECTION */
+.prize-section{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0;}
+.section-label{font-family:'Bebas Neue',sans-serif;font-size:clamp(0.7rem,1.1vw,1rem);letter-spacing:6px;text-align:center;color:rgba(255,255,255,0.25);}
+
+/* BIG PRIZES */
+.big-prizes{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;flex-shrink:0;}
+.prize-card{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;padding:clamp(10px,1.8vh,20px) 14px;position:relative;overflow:hidden;}
+.prize-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.prize-card.champ{background:linear-gradient(145deg,rgba(255,184,0,0.16),rgba(255,107,0,0.1));border:2px solid rgba(255,184,0,0.6);animation:champGlow 3s ease-in-out infinite;}
+.prize-card.champ::before{background:linear-gradient(90deg,transparent,#FFB800,transparent);}
+.prize-card.runner{background:rgba(180,180,200,0.08);border:1px solid rgba(180,180,200,0.3);}
+.prize-card.runner::before{background:linear-gradient(90deg,transparent,#C0C0D0,transparent);}
+.prize-card.third{background:rgba(180,120,60,0.08);border:1px solid rgba(180,120,60,0.3);}
+.prize-card.third::before{background:linear-gradient(90deg,transparent,#CD8040,transparent);}
+@keyframes champGlow{0%,100%{box-shadow:0 0 30px rgba(255,184,0,0.2);}50%{box-shadow:0 0 70px rgba(255,184,0,0.5);}}
+.prize-icon{font-size:clamp(1.8rem,3.5vw,3.2rem);margin-bottom:3px;}
+.prize-place{font-family:'Bebas Neue',sans-serif;font-size:clamp(0.8rem,1.3vw,1.2rem);letter-spacing:4px;}
+.prize-card.champ .prize-place{color:#FFB800;}
+.prize-card.runner .prize-place{color:#C0C0D0;}
+.prize-card.third .prize-place{color:#CD8040;}
+.prize-amount{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,5rem);line-height:1;letter-spacing:2px;}
+.prize-card.champ .prize-amount{color:#FFB800;text-shadow:0 0 30px rgba(255,184,0,0.6);}
+.prize-card.runner .prize-amount{color:#E0E0EE;}
+.prize-card.third .prize-amount{color:#D4956A;}
+.prize-desc{font-size:clamp(0.6rem,0.9vw,0.8rem);letter-spacing:2px;opacity:0.5;margin-top:2px;text-align:center;}
+
+/* WEEKLY SPIFFS */
+.weekly-prizes{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;flex-shrink:0;}
+.weekly-card{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:clamp(8px,1.5vh,16px) 14px;position:relative;overflow:hidden;}
+.weekly-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+.weekly-card.bracket::before{background:#FF6B00;}
+.weekly-card.team::before{background:#0A84FF;}
+.weekly-card.daily::before{background:#30D158;}
+.weekly-card.brick::before{background:#FF2D55;}
+.wc-icon{font-size:clamp(1.4rem,2.5vw,2.4rem);flex-shrink:0;}
+.wc-info{flex:1;}
+.wc-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(0.9rem,1.6vw,1.5rem);letter-spacing:2px;line-height:1;}
+.weekly-card.bracket .wc-title{color:#FF6B00;}
+.weekly-card.team .wc-title{color:#0A84FF;}
+.weekly-card.daily .wc-title{color:#30D158;}
+.weekly-card.brick .wc-title{color:#FF2D55;}
+.wc-desc{font-size:clamp(0.6rem,0.85vw,0.8rem);color:rgba(255,255,255,0.45);letter-spacing:1px;margin-top:2px;}
+.wc-amount{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,3vw,3rem);line-height:1;flex-shrink:0;}
+.weekly-card.bracket .wc-amount{color:#FF6B00;}
+.weekly-card.team .wc-amount{color:#0A84FF;}
+.weekly-card.daily .wc-amount{color:#30D158;}
+.weekly-card.brick .wc-amount{color:#FF2D55;}
+
+/* TICKER */
+.ticker-wrap{flex-shrink:0;background:rgba(255,184,0,0.07);border:1px solid rgba(255,184,0,0.18);border-radius:7px;padding:7px 0;overflow:hidden;position:relative;}
+.ticker-wrap::before{content:'🏀 LIVE';position:absolute;left:0;top:0;bottom:0;background:rgba(255,184,0,0.14);border-right:1px solid rgba(255,184,0,0.3);display:flex;align-items:center;padding:0 12px;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;letter-spacing:3px;color:#FFB800;z-index:2;white-space:nowrap;line-height:normal;}
+.ticker{display:flex;animation:ticker 28s linear infinite;padding-left:80px;white-space:nowrap;}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.ticker-item{font-family:'Bebas Neue',sans-serif;font-size:clamp(0.7rem,1vw,0.9rem);letter-spacing:3px;color:rgba(255,255,255,0.45);padding:0 36px;}
+.ticker-item span{color:#FFB800;}
+</style>
+</head>
+<body>
+<div class="bg-wrap">
+  <div class="bg-court"></div>
+  <div class="bg-lines"></div>
+  <div class="ball" style="left:8%;animation-duration:18s;animation-delay:0s;font-size:3rem">🏀</div>
+  <div class="ball" style="left:25%;animation-duration:24s;animation-delay:5s;font-size:1.8rem">🏀</div>
+  <div class="ball" style="left:48%;animation-duration:20s;animation-delay:9s;font-size:2.5rem">🏀</div>
+  <div class="ball" style="left:70%;animation-duration:16s;animation-delay:2s;font-size:2rem">🏀</div>
+  <div class="ball" style="left:88%;animation-duration:22s;animation-delay:7s;font-size:3rem">🏀</div>
+</div>
+
+<div class="wrap">
+  <div class="top-banner">
+    <div class="eyebrow">★ &nbsp; MARCH 2026 &nbsp; · &nbsp; 5-MIN+ TPV QUALIFIERS ONLY &nbsp; · &nbsp; WHO WANTS IT MOST? &nbsp; ★</div>
+    <div class="main-title">TRANSFER MADNESS</div>
+    <div class="subtitle">the hunt for $1,000 starts now · total prize pool $1,900+</div>
+  </div>
+
+  <div class="prize-section">
+    <div class="section-label">— Tournament Prizes —</div>
+
+    <div class="big-prizes">
+      <div class="prize-card runner">
+        <div class="prize-icon">🥈</div>
+        <div class="prize-place">Runner Up</div>
+        <div class="prize-amount">$500</div>
+        <div class="prize-desc">CHAMPIONSHIP FINALIST</div>
+      </div>
+      <div class="prize-card champ">
+        <div class="prize-icon" style="font-size:clamp(2.2rem,4.5vw,4rem)">🏆</div>
+        <div class="prize-place">Champion</div>
+        <div class="prize-amount">$1,000</div>
+        <div class="prize-desc">TRANSFER MADNESS CHAMPION</div>
+      </div>
+      <div class="prize-card third">
+        <div class="prize-icon">🥉</div>
+        <div class="prize-place">Final Four</div>
+        <div class="prize-amount">$200</div>
+        <div class="prize-desc">EACH SEMIFINALIST</div>
+      </div>
+    </div>
+
+    <div class="section-label">— Weekly & Daily Spiffs —</div>
+
+    <div class="weekly-prizes">
+      <div class="weekly-card bracket">
+        <div class="wc-icon">🎯</div>
+        <div class="wc-info"><div class="wc-title">BRACKET WIN</div><div class="wc-desc">WIN YOUR WEEKLY MATCHUP</div></div>
+        <div class="wc-amount">$50</div>
+      </div>
+      <div class="weekly-card team">
+        <div class="wc-icon">👥</div>
+        <div class="wc-info"><div class="wc-title">TEAM WIN</div><div class="wc-desc">WINNING TEAM · PER PERSON</div></div>
+        <div class="wc-amount">$25</div>
+      </div>
+      <div class="weekly-card daily">
+        <div class="wc-icon">⚡</div>
+        <div class="wc-info"><div class="wc-title">DAILY TOP</div><div class="wc-desc">MOST VALID XFERS THAT DAY</div></div>
+        <div class="wc-amount">$20</div>
+      </div>
+      <div class="weekly-card brick">
+        <div class="wc-icon">🧱</div>
+        <div class="wc-info"><div class="wc-title">BRICK AWARD</div><div class="wc-desc">LOSER BRACKET BOTTOM DWELLER</div></div>
+        <div class="wc-amount" style="font-size:clamp(1rem,2vw,2rem);text-align:center">YOUR<br>NAME<br>ON BLAST</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item">🏀 &nbsp; VALID XFERS = <span>5-MIN+ TPV ONLY</span></span>
+      <span class="ticker-item">💰 &nbsp; TOTAL PRIZE POOL = <span>$1,900+</span></span>
+      <span class="ticker-item">🎯 &nbsp; WIN YOUR MATCHUP = <span>$50 CASH</span></span>
+      <span class="ticker-item">👥 &nbsp; WIN FOR YOUR TEAM = <span>$25/PERSON</span></span>
+      <span class="ticker-item">⚡ &nbsp; DAILY GRIND = <span>$20/DAY</span></span>
+      <span class="ticker-item">🏆 &nbsp; CHAMPION TAKES HOME = <span>$1,000</span></span>
+      <span class="ticker-item">🧱 &nbsp; LOWEST IN THE LOSER BRACKET = <span>BRICK AWARD — YOU ON BLAST</span></span>
+      <span class="ticker-item">🔥 &nbsp; EVERY TRANSFER COUNTS &nbsp;·&nbsp; STAY HUNGRY &nbsp;·&nbsp; GET THAT MONEY</span>
+      <span class="ticker-item">🏀 &nbsp; VALID XFERS = <span>5-MIN+ TPV ONLY</span></span>
+      <span class="ticker-item">💰 &nbsp; TOTAL PRIZE POOL = <span>$1,900+</span></span>
+      <span class="ticker-item">🎯 &nbsp; WIN YOUR MATCHUP = <span>$50 CASH</span></span>
+      <span class="ticker-item">👥 &nbsp; WIN FOR YOUR TEAM = <span>$25/PERSON</span></span>
+      <span class="ticker-item">⚡ &nbsp; DAILY GRIND = <span>$20/DAY</span></span>
+      <span class="ticker-item">🏆 &nbsp; CHAMPION TAKES HOME = <span>$1,000</span></span>
+      <span class="ticker-item">🧱 &nbsp; LOWEST IN THE LOSER BRACKET = <span>BRICK AWARD — YOU ON BLAST</span></span>
+      <span class="ticker-item">🔥 &nbsp; EVERY TRANSFER COUNTS &nbsp;·&nbsp; STAY HUNGRY &nbsp;·&nbsp; GET THAT MONEY</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏀 TRANSFER MADNESS 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07070F; --panel:#0F0F1C; --panel2:#15152A; --border:#1E1E35;
+  --orange:#FF6B00; --gold:#FFB800; --blue:#0A84FF; --green:#30D158;
+  --red:#FF2D55; --text:#EEEEF5; --muted:#555575;
+  --teamA:#FF6B00; --teamB:#0A84FF; --win:#30D158; --lose:#FF2D55;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;height:100vh;width:100vw;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 50% 60% at 15% 50%,rgba(255,107,0,0.06) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 60% at 85% 50%,rgba(10,132,255,0.06) 0%,transparent 70%);}
+.grid{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.02;
+  background-image:linear-gradient(var(--orange) 1px,transparent 1px),linear-gradient(90deg,var(--orange) 1px,transparent 1px);
+  background-size:48px 48px;}
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:7px 16px 6px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;gap:10px;}
+header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teamA),var(--gold),var(--teamB));}
+.h-title{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.h-title h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,2.2vw,2.5rem);letter-spacing:4px;line-height:1;
+  background:linear-gradient(135deg,var(--orange),var(--gold),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h-sub{font-size:0.6rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
+.ball{font-size:1.6rem;animation:spin 5s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.scoreboard{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;}
+.score-card{display:flex;flex-direction:column;align-items:center;border-radius:8px;padding:4px 14px;min-width:130px;position:relative;overflow:hidden;border:1px solid var(--border);}
+.score-card.A{border-color:rgba(255,107,0,0.5);background:rgba(255,107,0,0.06);}
+.score-card.B{border-color:rgba(10,132,255,0.5);background:rgba(10,132,255,0.06);}
+.score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.score-card.A::before{background:var(--teamA);}
+.score-card.B::before{background:var(--teamB);}
+.sc-name{font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:3px;}
+.score-card.A .sc-name{color:var(--teamA);}
+.score-card.B .sc-name{color:var(--teamB);}
+.sc-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
+.sc-lbl{font-size:0.5rem;letter-spacing:2px;color:var(--muted);}
+.vs{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:2px;}
+.h-date{font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-align:right;flex-shrink:0;}
+
+/* MAIN AREA - top bracket + bottom loser bracket */
+.main-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* TOP: winners bracket */
+.winners-area{display:grid;grid-template-columns:1fr auto 1fr;flex:1;overflow:hidden;min-height:0;}
+.side{display:flex;align-items:stretch;overflow:hidden;padding:6px 4px;}
+.side.left{flex-direction:row;border-right:1px solid var(--border);}
+.side.right{flex-direction:row-reverse;border-left:1px solid var(--border);}
+
+/* CENTER */
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px;gap:6px;min-width:190px;max-width:190px;}
+.center-trophy{font-size:2.4rem;filter:drop-shadow(0 0 16px var(--gold));animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.center-label{font-family:'Bebas Neue',sans-serif;font-size:0.7rem;letter-spacing:4px;color:var(--gold);}
+.final-card{background:var(--panel2);border:1px solid var(--gold);border-radius:8px;overflow:hidden;width:180px;cursor:pointer;transition:box-shadow 0.2s;box-shadow:0 0 16px rgba(255,184,0,0.08);}
+.final-card:hover{box-shadow:0 0 30px rgba(255,184,0,0.3);}
+.final-lbl{font-family:'Bebas Neue',sans-serif;font-size:0.6rem;letter-spacing:3px;color:var(--gold);text-align:center;padding:3px;background:rgba(255,184,0,0.07);border-bottom:1px solid rgba(255,184,0,0.2);}
+.tlb{width:100%;}
+.tlb-row{display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:var(--panel);border-radius:5px;margin-bottom:3px;border:1px solid var(--border);}
+.tlb-row.A{border-color:rgba(255,107,0,0.3);}
+.tlb-row.B{border-color:rgba(10,132,255,0.3);}
+.tlb-name{font-family:'Bebas Neue',sans-serif;font-size:0.8rem;letter-spacing:2px;}
+.tlb-row.A .tlb-name{color:var(--teamA);}
+.tlb-row.B .tlb-name{color:var(--teamB);}
+.tlb-score{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;}
+.fa-lbl{font-size:0.5rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:2px;}
+.fa-row{display:flex;align-items:center;justify-content:space-between;padding:3px 8px;background:var(--panel);border-radius:5px;border:1px solid rgba(255,184,0,0.2);}
+.fa-name{font-size:0.75rem;font-weight:700;}
+.fa-score{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--gold);}
+
+/* LOSER BRACKET */
+.loser-area{
+  border-top:2px solid rgba(255,45,85,0.4);
+  background:rgba(255,45,85,0.04);
+  flex-shrink:0; padding:6px 8px;
+  display:flex; flex-direction:column; gap:4px;
+}
+.loser-header{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.loser-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:4px;
+  color:var(--red); display:flex;align-items:center;gap:8px;
+}
+.brick-badge{
+  background:rgba(255,45,85,0.15);border:1px solid rgba(255,45,85,0.4);
+  border-radius:6px;padding:3px 10px;
+  font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:2px;
+  color:var(--red);
+}
+.loser-matches{
+  display:flex;gap:6px;overflow-x:auto;align-items:center;
+  padding-bottom:2px;
+}
+.loser-match{
+  background:var(--panel);border:1px solid rgba(255,45,85,0.25);
+  border-radius:6px;overflow:hidden;min-width:160px;flex-shrink:0;
+  cursor:pointer;transition:border-color 0.2s;
+}
+.loser-match:hover{border-color:var(--red);}
+.loser-match.brick{border-color:var(--red);box-shadow:0 0 10px rgba(255,45,85,0.3);}
+.loser-round-label{
+  font-family:'Bebas Neue',sans-serif;font-size:0.55rem;letter-spacing:3px;
+  color:rgba(255,45,85,0.6);text-align:center;padding:2px 4px;
+  background:rgba(255,45,85,0.06);border-bottom:1px solid rgba(255,45,85,0.15);
+}
+
+/* ROUND COLUMNS */
+.rounds{display:flex;align-items:stretch;gap:4px;height:100%;}
+.round-col{display:flex;flex-direction:column;width:180px;flex-shrink:0;}
+.r-lbl{font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:3px;padding:0 4px 4px;border-bottom:1px solid var(--border);margin-bottom:4px;white-space:nowrap;width:100%;text-align:center;}
+.left .r-lbl{color:var(--teamA);}
+.right .r-lbl{color:var(--teamB);}
+.match-col{display:flex;flex-direction:column;justify-content:space-around;flex:1;width:100%;gap:4px;}
+
+/* MATCH CARD */
+.matchup{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;width:100%;transition:border-color 0.2s,box-shadow 0.2s;flex-shrink:0;}
+.left .matchup:hover{border-color:var(--teamA);box-shadow:0 0 8px rgba(255,107,0,0.2);}
+.right .matchup:hover{border-color:var(--teamB);box-shadow:0 0 8px rgba(10,132,255,0.2);}
+.matchup.bye{opacity:0.45;cursor:default;}
+.slot{display:flex;align-items:center;gap:5px;padding:6px 8px;transition:background 0.15s;}
+.slot:first-child{border-bottom:1px solid var(--border);}
+.slot.winner{background:rgba(48,209,88,0.1);}
+.slot.loser{opacity:0.32;}
+.slot.tbd{opacity:0.2;}
+.seed{font-size:0.58rem;color:var(--muted);font-weight:700;min-width:16px;}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot-A{background:var(--teamA);}
+.dot-B{background:var(--teamB);}
+.dot-F{background:var(--gold);}
+.rep-name{font-size:1rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.3px;}
+.slot.winner .rep-name{color:var(--win);}
+.xfer{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);min-width:24px;text-align:right;}
+.slot.winner .xfer{color:var(--win);}
+.chk{font-size:0.6rem;color:var(--win);margin-left:2px;}
+
+/* BRICK ICON on loser slot */
+.slot.brick-slot .rep-name{color:var(--red);}
+.slot.brick-slot .xfer{color:var(--red);}
+
+/* BOTTOM BAR */
+.bottom-bar{display:flex;align-items:center;justify-content:center;padding:4px 16px;border-top:1px solid var(--border);background:var(--panel);flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;letter-spacing:3px;color:var(--muted);}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--panel2);border-radius:12px;padding:22px;width:290px;}
+.modal.ob{border:1px solid var(--orange);box-shadow:0 0 40px rgba(255,107,0,0.2);}
+.modal.rb{border:1px solid var(--red);box-shadow:0 0 40px rgba(255,45,85,0.2);}
+.modal.gb{border:1px solid var(--gold);box-shadow:0 0 40px rgba(255,184,0,0.15);}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;margin-bottom:12px;}
+.modal.ob h2{color:var(--orange);}
+.modal.rb h2{color:var(--red);}
+.modal.gb h2{color:var(--gold);}
+.ig{margin-bottom:10px;}
+.ig label{display:block;font-size:0.62rem;letter-spacing:2px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;}
+.ig input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:7px 9px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:1rem;}
+.ig input:focus{outline:none;border-color:var(--orange);}
+.mbtns{display:flex;gap:8px;margin-top:12px;}
+.btn{flex:1;padding:8px;border:none;border-radius:5px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:2px;cursor:pointer;transition:opacity 0.2s;}
+.btn:hover{opacity:0.8;}
+.btn-p{background:var(--orange);color:#fff;}
+.btn-r{background:var(--red);color:#fff;}
+.btn-s{background:var(--border);color:var(--muted);}
+.btn-g{background:var(--gold);color:#000;}
+
+/* CHAMP BANNER */
+.champ-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:300;background:linear-gradient(90deg,var(--orange),var(--gold),var(--orange));padding:8px;text-align:center;animation:slideDown 0.5s ease;}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.cb-text{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:5px;color:#000;}
+
+.reset-btn{position:fixed;bottom:8px;right:8px;z-index:50;background:var(--panel);border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:0.65rem;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{border-color:#ff4444;color:#ff4444;}
+.names-btn{position:fixed;bottom:8px;left:8px;z-index:50;background:var(--panel);border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:0.65rem;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;}
+.names-btn:hover{border-color:var(--gold);color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="grid"></div>
+
+<!-- NAME MODAL -->
+<div class="overlay" id="nameOverlay">
+  <div class="modal gb">
+    <h2>🏀 NAME YOUR TEAMS</h2>
+    <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;letter-spacing:1px">LET THE REPS DECIDE!</p>
+    <div class="ig"><label style="color:var(--teamA)">🟠 Team A Name</label><input id="nameA" type="text" placeholder="TEAM A" maxlength="14" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;"></div>
+    <div class="ig"><label style="color:var(--teamB)">🔵 Team B Name</label><input id="nameB" type="text" placeholder="TEAM B" maxlength="14" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;"></div>
+    <div class="mbtns"><button class="btn btn-s" onclick="skipNames()">SKIP</button><button class="btn btn-g" onclick="saveNames()">LET'S GO 🏀</button></div>
+  </div>
+</div>
+
+<!-- SCORE MODAL (winners) -->
+<div class="overlay" id="scoreOverlay">
+  <div class="modal ob">
+    <h2 id="mTitle">ENTER SCORES</h2>
+    <div class="ig"><label id="mLabelA">REP A</label><input type="number" id="mScoreA" min="0" placeholder="0"></div>
+    <div class="ig"><label id="mLabelB">REP B</label><input type="number" id="mScoreB" min="0" placeholder="0"></div>
+    <div class="mbtns"><button class="btn btn-s" onclick="closeScore()">CANCEL</button><button class="btn btn-p" onclick="doSave()">SAVE</button></div>
+  </div>
+</div>
+
+<!-- SCORE MODAL (loser bracket) -->
+<div class="overlay" id="loserScoreOverlay">
+  <div class="modal rb">
+    <h2 id="lmTitle">🧱 LOSER BRACKET</h2>
+    <div class="ig"><label id="lmLabelA">REP A</label><input type="number" id="lmScoreA" min="0" placeholder="0"></div>
+    <div class="ig"><label id="lmLabelB">REP B</label><input type="number" id="lmScoreB" min="0" placeholder="0"></div>
+    <div class="mbtns"><button class="btn btn-s" onclick="closeLScore()">CANCEL</button><button class="btn btn-r" onclick="doLSave()">SAVE</button></div>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <header>
+    <div class="h-title">
+      <span class="ball">🏀</span>
+      <div><h1>TRANSFER MADNESS <span style="font-size:0.45em;color:var(--gold)">2026</span></h1>
+      <div class="h-sub">5-MIN+ TPV ONLY · CLICK ANY MATCH TO SCORE</div></div>
+    </div>
+    <div class="scoreboard">
+      <div class="score-card A"><div class="sc-name" id="scNameA">TEAM A</div><div class="sc-num" id="scNumA">0</div><div class="sc-lbl">TOTAL XFERS</div></div>
+      <div class="vs">VS</div>
+      <div class="score-card B"><div class="sc-name" id="scNameB">TEAM B</div><div class="sc-num" id="scNumB">0</div><div class="sc-lbl">TOTAL XFERS</div></div>
+    </div>
+    <div class="h-date" id="hDate"></div>
+  </header>
+
+  <div class="main-wrap">
+    <!-- WINNERS BRACKET -->
+    <div class="winners-area">
+      <div class="side left" id="sideLeft"></div>
+      <div class="center" id="centerCol">
+        <div class="center-trophy">🏆</div>
+        <div class="center-label">CHAMPIONSHIP</div>
+        <div id="finalMatch"></div>
+        <div style="height:4px"></div>
+        <div class="tlb" id="teamLB"></div>
+        <div style="height:3px"></div>
+        <div id="floatPanel"></div>
+      </div>
+      <div class="side right" id="sideRight"></div>
+    </div>
+
+    <!-- LOSER BRACKET -->
+    <div class="loser-area" id="loserArea">
+      <div class="loser-header">
+        <div class="loser-title">🧱 LOSER BRACKET <span style="font-size:0.7rem;color:var(--muted);letter-spacing:1px">— eliminated reps still on blast</span></div>
+        <div class="brick-badge" id="brickBadge">🧱 BRICK AWARD: —</div>
+      </div>
+      <div class="loser-matches" id="loserMatches"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">CLICK ANY MATCH TO ENTER WEEKLY SCORES</div>
+</div>
+
+<div class="champ-banner" id="champBanner"><div class="cb-text" id="champText">🏆 CHAMPION 🏆</div></div>
+<button class="reset-btn" onclick="confirmReset()">↺ RESET</button>
+<button class="names-btn" onclick="showNames()">✏️ TEAM NAMES</button>
+
+<script>
+const REPS=[
+  {name:'Sean Buendia',seed:1,team:'A',hist:128},
+  {name:'Eric Corley',seed:2,team:'B',hist:119},
+  {name:'Teresa Leo',seed:3,team:'B',hist:99},
+  {name:'Nathan Kerwick',seed:4,team:'A',hist:96},
+  {name:'Baris Banks',seed:5,team:'A',hist:88},
+  {name:'Brandon Tharp',seed:6,team:'B',hist:86},
+  {name:'Thomas Houge',seed:7,team:'B',hist:80},
+  {name:'Aaron Scott',seed:8,team:'A',hist:54},
+  {name:'Travis Wells',seed:9,team:'A',hist:55},
+  {name:'Alisa Kobelev',seed:10,team:'F',hist:49},
+  {name:'Bere Johnson-Smith',seed:11,team:'B',hist:35},
+  {name:'Rachel Abraira',seed:12,team:'A',hist:34},
+  {name:'Roger Logan',seed:13,team:'B',hist:22},
+  {name:'Andrew Causa',seed:14,team:'A',hist:19},
+];
+
+let ST={
+  names:{A:'TEAM A',B:'TEAM B'},
+  rounds:[],
+  loserRounds:[], // each round = array of matches for eliminated reps
+  teamXfers:[{A:0,B:0},{A:0,B:0},{A:0,B:0},{A:0,B:0}],
+  brickAward:null, // name of current brick holder
+};
+
+function initRounds(){
+  const pairs=[[1,14],[2,13],[3,12],[4,11],[5,10],[6,9],[7,8]];
+  const r1=pairs.map(([a,b])=>{
+    const rA=REPS.find(r=>r.seed===a),rB=REPS.find(r=>r.seed===b);
+    return{repA:rA.name,repB:rB.name,seedA:a,seedB:b,tA:rA.team,tB:rB.team,sA:null,sB:null,winner:null,bye:false};
+  });
+  const mk=n=>Array(n).fill(null).map(()=>({repA:null,repB:null,seedA:null,seedB:null,tA:null,tB:null,sA:null,sB:null,winner:null,bye:false}));
+  ST.rounds=[r1,mk(4),mk(2),mk(1)];
+  ST.loserRounds=[];
+}
+
+// After each winners round, collect losers and build loser bracket matches
+function buildLoserRound(roundIdx){
+  const losers=[];
+  ST.rounds[roundIdx].forEach(m=>{
+    if(!m.winner||m.bye) return;
+    const loserName=m.winner===m.repA?m.repB:m.repA;
+    const loserSeed=m.winner===m.repA?m.seedB:m.seedA;
+    const loserTeam=m.winner===m.repA?m.tB:m.tA;
+    if(loserName) losers.push({name:loserName,seed:loserSeed,team:loserTeam});
+  });
+  if(losers.length<2) return;
+  // Pair them up
+  const matches=[];
+  for(let i=0;i<losers.length-1;i+=2){
+    matches.push({repA:losers[i].name,repB:losers[i+1].name,seedA:losers[i].seed,seedB:losers[i+1].seed,tA:losers[i].team,tB:losers[i+1].team,sA:null,sB:null,winner:null,roundLabel:'LOSER R'+(roundIdx+1)});
+  }
+  // odd one out gets a bye
+  if(losers.length%2!==0){
+    const b=losers[losers.length-1];
+    matches.push({repA:b.name,repB:null,seedA:b.seed,seedB:null,tA:b.team,tB:null,sA:null,sB:null,winner:b.name,bye:true,roundLabel:'LOSER R'+(roundIdx+1)});
+  }
+  // Replace or add this round's loser matches
+  if(ST.loserRounds[roundIdx]) ST.loserRounds[roundIdx]=matches;
+  else ST.loserRounds.push(matches);
+}
+
+function updateBrickAward(){
+  // Find lowest scorer in loser bracket this round
+  let worst=null,worstScore=Infinity;
+  ST.loserRounds.forEach(rnd=>{
+    rnd.forEach(m=>{
+      if(m.sA!==null&&m.sA<worstScore){worstScore=m.sA;worst=m.repA;}
+      if(m.sB!==null&&m.sB<worstScore){worstScore=m.sB;worst=m.repB;}
+    });
+  });
+  ST.brickAward=worst;
+}
+
+function renderAll(){
+  // Header
+  document.getElementById('scNameA').textContent=ST.names.A;
+  document.getElementById('scNameB').textContent=ST.names.B;
+  let tA=0,tB=0;
+  ST.teamXfers.forEach(w=>{tA+=w.A;tB+=w.B;});
+  document.getElementById('scNumA').textContent=tA;
+  document.getElementById('scNumB').textContent=tB;
+  document.getElementById('hDate').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+  renderSides();
+  renderCenter();
+  renderLoserBracket();
+  const week=getActiveRound();
+  document.getElementById('bottomBar').textContent=week?`NOW PLAYING: ${week} · CLICK ANY MATCH TO ENTER SCORES`:'🏆 ALL ROUNDS COMPLETE';
+  checkChamp();
+}
+
+function getActiveRound(){
+  const names=['ROUND OF 14','QUARTERFINALS','SEMIFINALS','CHAMPIONSHIP'];
+  for(let i=0;i<ST.rounds.length;i++){
+    if(ST.rounds[i].some(m=>!m.winner&&m.repA&&m.repB&&!m.bye)) return names[i];
+  }
+  return null;
+}
+
+function renderSides(){
+  const left=document.getElementById('sideLeft');
+  const right=document.getElementById('sideRight');
+  left.innerHTML='';right.innerHTML='';
+  const lc=document.createElement('div');lc.className='rounds';
+  const rc=document.createElement('div');rc.className='rounds';rc.style.flexDirection='row-reverse';
+  const r1L=[{m:ST.rounds[0][0],i:0},{m:ST.rounds[0][3],i:3},{m:ST.rounds[0][4],i:4},{m:ST.rounds[0][6],i:6}];
+  const r1R=[{m:ST.rounds[0][1],i:1},{m:ST.rounds[0][2],i:2},{m:ST.rounds[0][5],i:5}];
+  const r2L=[{m:ST.rounds[1][0],i:0},{m:ST.rounds[1][1],i:1}];
+  const r2R=[{m:ST.rounds[1][2],i:2},{m:ST.rounds[1][3],i:3}];
+  const r3L=[{m:ST.rounds[2][0],i:0}];
+  const r3R=[{m:ST.rounds[2][1],i:1}];
+  lc.appendChild(buildCol(r1L,0,'ROUND OF 14','left'));
+  lc.appendChild(buildCol(r2L,1,'QUARTERS','left'));
+  lc.appendChild(buildCol(r3L,2,'SEMIS','left'));
+  rc.appendChild(buildCol(r1R,0,'ROUND OF 14','right'));
+  rc.appendChild(buildCol(r2R,1,'QUARTERS','right'));
+  rc.appendChild(buildCol(r3R,2,'SEMIS','right'));
+  left.appendChild(lc);right.appendChild(rc);
+}
+
+function buildCol(items,ri,label,side){
+  const col=document.createElement('div');col.className='round-col';
+  const lbl=document.createElement('div');lbl.className='r-lbl';lbl.textContent=label;col.appendChild(lbl);
+  const mc=document.createElement('div');mc.className='match-col';
+  items.forEach(({m,i})=>mc.appendChild(buildCard(m,ri,i,false)));
+  col.appendChild(mc);return col;
+}
+
+function buildCard(match,ri,mi,isLoser){
+  const wrap=document.createElement('div');
+  const card=document.createElement('div');
+  card.className=(isLoser?'loser-match':'matchup')+(match.bye?' bye':'');
+  if(match.repA&&match.repB&&!match.bye){
+    card.onclick=isLoser?()=>openLScore(ri,mi):()=>openScore(ri,mi);
+  }
+  if(isLoser&&match.roundLabel){
+    const rl=document.createElement('div');rl.className='loser-round-label';rl.textContent=match.roundLabel;card.appendChild(rl);
+  }
+  card.appendChild(makeSlot(match.repA,match.seedA,match.tA,match.sA,match.winner===match.repA,match.winner&&match.winner!==match.repA,isLoser&&match.repA===ST.brickAward));
+  card.appendChild(makeSlot(match.repB,match.seedB,match.tB,match.sB,match.winner===match.repB,match.winner&&match.winner!==match.repB,isLoser&&match.repB===ST.brickAward));
+  wrap.appendChild(card);return wrap;
+}
+
+function makeSlot(name,seed,team,score,isW,isL,isBrick){
+  const s=document.createElement('div');
+  let cls='slot'+(isW?' winner':isL?' loser':!name?' tbd':'');
+  if(isBrick) cls+=' brick-slot';
+  s.className=cls;
+  s.innerHTML=`<span class="seed">${seed?'#'+seed:''}</span><span class="dot dot-${team||'F'}"></span><span class="rep-name">${isBrick?'🧱 ':''} ${name||'TBD'}</span><span class="xfer">${score!==null?score:'—'}</span>${isW?'<span class="chk">✓</span>':''}`;
+  return s;
+}
+
+function renderCenter(){
+  const fm=document.getElementById('finalMatch');fm.innerHTML='';
+  const f=ST.rounds[3][0];
+  if(f.repA||f.repB){
+    const card=document.createElement('div');card.className='final-card';
+    if(f.repA&&f.repB&&!f.winner) card.onclick=()=>openScore(3,0);
+    card.innerHTML=`<div class="final-lbl">🏆 CHAMPIONSHIP MATCH</div>`;
+    card.appendChild(makeSlot(f.repA,f.seedA,f.tA,f.sA,f.winner===f.repA,f.winner&&f.winner!==f.repA,false));
+    card.appendChild(makeSlot(f.repB,f.seedB,f.tB,f.sB,f.winner===f.repB,f.winner&&f.winner!==f.repB,false));
+    fm.appendChild(card);
+  }
+  let tA=0,tB=0;ST.teamXfers.forEach(w=>{tA+=w.A;tB+=w.B;});
+  document.getElementById('teamLB').innerHTML=`
+    <div class="tlb-row A"><span class="tlb-name">${ST.names.A}</span><span class="tlb-score" style="color:var(--teamA)">${tA}</span></div>
+    <div class="tlb-row B"><span class="tlb-name">${ST.names.B}</span><span class="tlb-score" style="color:var(--teamB)">${tB}</span></div>`;
+  const fp=document.getElementById('floatPanel');fp.innerHTML='';
+  REPS.filter(r=>r.team==='F').forEach(r=>{
+    const lbl=document.createElement('div');lbl.className='fa-lbl';lbl.textContent='⭐ FREE AGENT';
+    const row=document.createElement('div');row.className='fa-row';
+    row.innerHTML=`<span class="fa-name">${r.name}</span><span class="fa-score">${getRepXfers(r.name)}</span>`;
+    fp.appendChild(lbl);fp.appendChild(row);
+  });
+}
+
+function renderLoserBracket(){
+  const container=document.getElementById('loserMatches');
+  container.innerHTML='';
+  if(!ST.loserRounds.length){
+    container.innerHTML=`<div style="font-size:0.8rem;color:var(--muted);letter-spacing:2px;padding:4px 8px">LOSERS APPEAR HERE AFTER ROUND 1 COMPLETES</div>`;
+    return;
+  }
+  ST.loserRounds.forEach((rnd,ri)=>{
+    rnd.forEach((m,mi)=>{
+      container.appendChild(buildCard(m,ri,mi,true));
+    });
+  });
+  // Update brick badge
+  const badge=document.getElementById('brickBadge');
+  badge.textContent=ST.brickAward?`🧱 BRICK AWARD: ${ST.brickAward.toUpperCase()}`:'🧱 BRICK AWARD: —';
+}
+
+function getRepXfers(name){
+  let t=0;
+  ST.rounds.forEach(rnd=>rnd.forEach(m=>{if(m.repA===name&&m.sA!==null)t+=m.sA;if(m.repB===name&&m.sB!==null)t+=m.sB;}));
+  ST.loserRounds.forEach(rnd=>rnd.forEach(m=>{if(m.repA===name&&m.sA!==null)t+=m.sA;if(m.repB===name&&m.sB!==null)t+=m.sB;}));
+  return t;
+}
+
+// WINNERS BRACKET SCORING
+let eR=null,eM=null;
+function openScore(ri,mi){
+  const m=ST.rounds[ri][mi];
+  if(!m.repA||!m.repB||m.bye) return;
+  eR=ri;eM=mi;
+  const rn=['ROUND OF 14','QUARTERS','SEMIS','CHAMPIONSHIP'];
+  document.getElementById('mTitle').textContent=`${rn[ri]} · MATCH ${mi+1}`;
+  document.getElementById('mLabelA').textContent=`${m.repA} (#${m.seedA}) — VALID XFERS`;
+  document.getElementById('mLabelB').textContent=`${m.repB} (#${m.seedB}) — VALID XFERS`;
+  document.getElementById('mScoreA').value=m.sA!==null?m.sA:'';
+  document.getElementById('mScoreB').value=m.sB!==null?m.sB:'';
+  document.getElementById('scoreOverlay').classList.add('open');
+  document.getElementById('mScoreA').focus();
+}
+function closeScore(){document.getElementById('scoreOverlay').classList.remove('open');eR=null;eM=null;}
+
+function doSave(){
+  const a=parseInt(document.getElementById('mScoreA').value);
+  const b=parseInt(document.getElementById('mScoreB').value);
+  if(isNaN(a)||isNaN(b)){alert('Enter scores for both.');return;}
+  if(a===b){alert('Tie! Adjust to break it.');return;}
+  const m=ST.rounds[eR][eM];
+  const oldA=m.sA||0,oldB=m.sB||0;
+  m.sA=a;m.sB=b;m.winner=a>b?m.repA:m.repB;
+  const rdA=REPS.find(r=>r.name===m.repA),rdB=REPS.find(r=>r.name===m.repB);
+  const wk=ST.teamXfers[eR];
+  if(rdA&&rdA.team!=='F') wk[rdA.team]=(wk[rdA.team]||0)-oldA+a;
+  if(rdB&&rdB.team!=='F') wk[rdB.team]=(wk[rdB.team]||0)-oldB+b;
+  if(eR===0) tryR2();
+  if(eR===1) tryR3();
+  if(eR===2) tryR4();
+  // Check if this round is fully done and build loser round
+  const allDone=ST.rounds[eR].every(m=>m.winner||m.bye);
+  if(allDone) buildLoserRound(eR);
+  updateBrickAward();
+  save();closeScore();renderAll();
+}
+
+function tryR2(){
+  const w=ST.rounds[0].filter(m=>m.winner).map(m=>{const isA=m.winner===m.repA;return{name:m.winner,seed:isA?m.seedA:m.seedB,team:isA?m.tA:m.tB};});
+  if(w.length<7) return;
+  w.sort((a,b)=>a.seed-b.seed);
+  const bye=w[0],rest=w.slice(1);
+  const r2=ST.rounds[1];
+  r2[0]={repA:bye.name,repB:null,seedA:bye.seed,seedB:null,tA:bye.team,tB:null,sA:null,sB:null,winner:bye.name,bye:true};
+  r2[1]={repA:rest[0].name,repB:rest[5].name,seedA:rest[0].seed,seedB:rest[5].seed,tA:rest[0].team,tB:rest[5].team,sA:null,sB:null,winner:null,bye:false};
+  r2[2]={repA:rest[1].name,repB:rest[4].name,seedA:rest[1].seed,seedB:rest[4].seed,tA:rest[1].team,tB:rest[4].team,sA:null,sB:null,winner:null,bye:false};
+  r2[3]={repA:rest[2].name,repB:rest[3].name,seedA:rest[2].seed,seedB:rest[3].seed,tA:rest[2].team,tB:rest[3].team,sA:null,sB:null,winner:null,bye:false};
+}
+function tryR3(){
+  const w=[];
+  ST.rounds[1].forEach(m=>{if(m.bye)w.push({name:m.repA,seed:m.seedA,team:m.tA});else if(m.winner){const isA=m.winner===m.repA;w.push({name:m.winner,seed:isA?m.seedA:m.seedB,team:isA?m.tA:m.tB});}});
+  if(w.length<4) return;
+  w.sort((a,b)=>a.seed-b.seed);
+  ST.rounds[2][0]={repA:w[0].name,repB:w[3].name,seedA:w[0].seed,seedB:w[3].seed,tA:w[0].team,tB:w[3].team,sA:null,sB:null,winner:null,bye:false};
+  ST.rounds[2][1]={repA:w[1].name,repB:w[2].name,seedA:w[1].seed,seedB:w[2].seed,tA:w[1].team,tB:w[2].team,sA:null,sB:null,winner:null,bye:false};
+}
+function tryR4(){
+  const w=ST.rounds[2].filter(m=>m.winner).map(m=>{const isA=m.winner===m.repA;return{name:m.winner,seed:isA?m.seedA:m.seedB,team:isA?m.tA:m.tB};});
+  if(w.length<2) return;
+  ST.rounds[3][0]={repA:w[0].name,repB:w[1].name,seedA:w[0].seed,seedB:w[1].seed,tA:w[0].team,tB:w[1].team,sA:null,sB:null,winner:null,bye:false};
+}
+
+// LOSER BRACKET SCORING
+let lR=null,lM=null;
+function openLScore(ri,mi){
+  const m=ST.loserRounds[ri][mi];
+  if(!m.repA||!m.repB||m.bye) return;
+  lR=ri;lM=mi;
+  document.getElementById('lmTitle').textContent=`🧱 LOSER BRACKET · R${ri+1} M${mi+1}`;
+  document.getElementById('lmLabelA').textContent=`${m.repA} (#${m.seedA}) — VALID XFERS`;
+  document.getElementById('lmLabelB').textContent=`${m.repB} (#${m.seedB}) — VALID XFERS`;
+  document.getElementById('lmScoreA').value=m.sA!==null?m.sA:'';
+  document.getElementById('lmScoreB').value=m.sB!==null?m.sB:'';
+  document.getElementById('loserScoreOverlay').classList.add('open');
+  document.getElementById('lmScoreA').focus();
+}
+function closeLScore(){document.getElementById('loserScoreOverlay').classList.remove('open');lR=null;lM=null;}
+
+function doLSave(){
+  const a=parseInt(document.getElementById('lmScoreA').value);
+  const b=parseInt(document.getElementById('lmScoreB').value);
+  if(isNaN(a)||isNaN(b)){alert('Enter scores for both.');return;}
+  if(a===b){alert('Tie! Adjust to break it.');return;}
+  const m=ST.loserRounds[lR][lM];
+  m.sA=a;m.sB=b;m.winner=a>b?m.repA:m.repB;
+  updateBrickAward();
+  save();closeLScore();renderAll();
+}
+
+function checkChamp(){
+  const champ=ST.rounds[3][0]?.winner;
+  const banner=document.getElementById('champBanner');
+  if(champ){banner.style.display='block';document.getElementById('champText').textContent=`🏆 ${champ.toUpperCase()} IS THE TRANSFER MADNESS CHAMPION! 🏆`;}
+  else banner.style.display='none';
+}
+
+function showNames(){document.getElementById('nameOverlay').classList.add('open');}
+function skipNames(){document.getElementById('nameOverlay').classList.remove('open');}
+function saveNames(){
+  const a=document.getElementById('nameA').value.trim().toUpperCase();
+  const b=document.getElementById('nameB').value.trim().toUpperCase();
+  if(a)ST.names.A=a;if(b)ST.names.B=b;
+  save();skipNames();renderAll();
+}
+
+function save(){try{localStorage.setItem('tm2026v4',JSON.stringify(ST));}catch(e){}}
+function load(){try{const s=localStorage.getItem('tm2026v4');if(s){ST=JSON.parse(s);return true;}}catch(e){}return false;}
+function confirmReset(){if(confirm('Reset everything? Cannot be undone.')){localStorage.removeItem('tm2026v4');location.reload();}}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeScore();closeLScore();skipNames();}
+  if(e.key==='Enter'){
+    if(document.getElementById('scoreOverlay').classList.contains('open'))doSave();
+    if(document.getElementById('loserScoreOverlay').classList.contains('open'))doLSave();
+  }
+});
+
+if(!load()){initRounds();save();}
+document.getElementById('app').style.display='flex';
+renderAll();
+if(ST.names.A==='TEAM A'&&ST.names.B==='TEAM B')setTimeout(()=>document.getElementById('nameOverlay').classList.add('open'),600);
+</script>
+</body>
+</html>

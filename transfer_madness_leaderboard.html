@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRANSFER MADNESS 2026 — LEADERBOARD</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070F; --panel: #0F0F1C; --panel2: #15152A; --border: #1E1E35;
+  --orange: #FF6B00; --gold: #FFB800; --blue: #0A84FF; --green: #30D158;
+  --red: #FF2D55; --text: #EEEEF5; --muted: #555575;
+  --teamA: #FF6B00; --teamB: #0A84FF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Barlow Condensed', sans-serif; height: 100vh; width: 100vw; }
+body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 50% 60% at 15% 50%, rgba(255,107,0,0.06) 0%, transparent 70%),
+  radial-gradient(ellipse 50% 60% at 85% 50%, rgba(10,132,255,0.06) 0%, transparent 70%),
+  radial-gradient(ellipse 30% 50% at 50% 100%, rgba(255,184,0,0.04) 0%, transparent 60%); }
+.grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.02;
+  background-image: linear-gradient(var(--orange) 1px,transparent 1px),linear-gradient(90deg,var(--orange) 1px,transparent 1px);
+  background-size: 52px 52px; }
+
+.app { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100vh; padding: 16px 20px 12px; gap: 12px; }
+
+/* HEADER */
+.header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; padding-bottom: 10px; }
+.header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--teamA), var(--gold), var(--teamB)); }
+.h-left { display: flex; align-items: center; gap: 10px; }
+.ball { font-size: 2rem; animation: spin 5s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.h-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 3vw, 3rem); letter-spacing: 4px; line-height: 1;
+  background: linear-gradient(135deg, var(--orange), var(--gold), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.h-sub { font-size: 0.65rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
+
+/* TEAM TOTALS */
+.team-totals { display: flex; align-items: center; gap: 12px; }
+.total-card { display: flex; flex-direction: column; align-items: center; border-radius: 10px; padding: 6px 20px;
+  position: relative; overflow: hidden; border: 1px solid var(--border); min-width: 160px; }
+.total-card.A { border-color: rgba(255,107,0,0.5); background: rgba(255,107,0,0.07); }
+.total-card.B { border-color: rgba(10,132,255,0.5); background: rgba(10,132,255,0.07); }
+.total-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.total-card.A::before { background: var(--teamA); }
+.total-card.B::before { background: var(--teamB); }
+.tc-name { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 3px; }
+.total-card.A .tc-name { color: var(--teamA); }
+.total-card.B .tc-name { color: var(--teamB); }
+.tc-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; }
+.tc-lbl { font-size: 0.55rem; letter-spacing: 2px; color: var(--muted); }
+.vs-badge { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--gold); letter-spacing: 2px; }
+.lead-tag { font-size: 0.6rem; letter-spacing: 1px; padding: 1px 6px; border-radius: 8px; margin-top: 2px; }
+.lead-A { background: rgba(255,107,0,0.2); color: var(--teamA); }
+.lead-B { background: rgba(10,132,255,0.2); color: var(--teamB); }
+
+/* MAIN GRID */
+.teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+
+/* TEAM COLUMN */
+.team-col { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.team-col-header { display: flex; align-items: center; justify-content: space-between;
+  border-radius: 10px; padding: 10px 16px; flex-shrink: 0; position: relative; overflow: hidden; }
+.team-col-header.A { background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.4); }
+.team-col-header.B { background: rgba(10,132,255,0.1); border: 1px solid rgba(10,132,255,0.4); }
+.team-col-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.team-col-header.A::before { background: var(--teamA); }
+.team-col-header.B::before { background: var(--teamB); }
+.tch-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.4rem, 2.5vw, 2.5rem); letter-spacing: 4px; }
+.team-col-header.A .tch-name { color: var(--teamA); }
+.team-col-header.B .tch-name { color: var(--teamB); }
+.tch-total { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 3vw, 3rem); }
+.tch-lbl { font-size: 0.6rem; letter-spacing: 2px; color: var(--muted); }
+
+/* REP ROWS */
+.rep-list { display: flex; flex-direction: column; gap: 5px; flex: 1; overflow: hidden; }
+.rep-row { display: flex; align-items: center; gap: 10px; background: var(--panel);
+  border-radius: 8px; padding: 8px 14px; border: 1px solid var(--border);
+  transition: border-color 0.2s; flex-shrink: 0; position: relative; overflow: hidden; }
+.rep-row.A:hover { border-color: rgba(255,107,0,0.3); }
+.rep-row.B:hover { border-color: rgba(10,132,255,0.3); }
+.rep-row.top-rep { border-color: var(--gold); background: rgba(255,184,0,0.05); }
+
+/* RANK */
+.rep-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--muted); min-width: 28px; text-align: center; }
+.rep-row:nth-child(1) .rep-rank { color: var(--gold); font-size: 1.3rem; }
+.rep-row:nth-child(2) .rep-rank { color: #C0C0D0; }
+.rep-row:nth-child(3) .rep-rank { color: #CD8040; }
+
+/* BAR */
+.rep-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.rep-name-row { display: flex; align-items: center; justify-content: space-between; }
+.rep-name { font-size: clamp(1rem, 1.8vw, 1.6rem); font-weight: 700; letter-spacing: 0.5px; line-height: 1; }
+.rep-score { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.2rem, 2vw, 1.8rem); color: var(--gold); }
+.rep-row.A .rep-score { color: var(--teamA); }
+.rep-row.B .rep-score { color: var(--teamB); }
+.rep-row:nth-child(1) .rep-score { color: var(--gold); }
+.bar-bg { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+.bar-fill.A { background: linear-gradient(90deg, var(--teamA), var(--gold)); }
+.bar-fill.B { background: linear-gradient(90deg, var(--teamB), #00C8FF); }
+
+/* CROWN */
+.crown { font-size: 0.9rem; margin-left: 4px; }
+
+/* FREE AGENT */
+.fa-section { flex-shrink: 0; }
+.fa-header { display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,184,0,0.07); border: 1px solid rgba(255,184,0,0.25);
+  border-radius: 8px; padding: 6px 14px; }
+.fa-title { font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 3px; color: var(--gold); }
+.fa-reps { display: flex; gap: 8px; flex-wrap: wrap; }
+.fa-rep { display: flex; align-items: center; gap: 6px; }
+.fa-name { font-size: 0.9rem; font-weight: 700; }
+.fa-score { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--gold); }
+
+/* BOTTOM BAR */
+.bottom-bar { display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 0; flex-shrink: 0; border-top: 1px solid var(--border); }
+.bb-hint { font-size: 0.6rem; letter-spacing: 2px; color: var(--muted); }
+.bb-date { font-size: 0.6rem; letter-spacing: 2px; color: var(--muted); }
+.bb-brick { font-size: 0.65rem; letter-spacing: 2px; color: var(--red); }
+
+/* EDIT MODAL */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 200; align-items: center; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: var(--panel2); border: 1px solid var(--orange); border-radius: 12px; padding: 24px; width: 320px; box-shadow: 0 0 40px rgba(255,107,0,0.2); }
+.modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(--orange); margin-bottom: 14px; }
+.modal-sub { font-size: 0.7rem; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; }
+.rep-inputs { display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; }
+.rep-input-row { display: flex; align-items: center; gap: 8px; background: var(--panel); border-radius: 6px; padding: 7px 10px; border: 1px solid var(--border); }
+.rep-input-row.A { border-color: rgba(255,107,0,0.2); }
+.rep-input-row.B { border-color: rgba(10,132,255,0.2); }
+.rir-name { font-size: 0.85rem; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rir-input { width: 64px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px;
+  color: var(--gold); font-family: 'Bebas Neue', sans-serif; font-size: 1rem; text-align: center; }
+.rir-input:focus { outline: none; border-color: var(--orange); }
+.mbtns { display: flex; gap: 8px; margin-top: 14px; }
+.btn { flex: 1; padding: 9px; border: none; border-radius: 6px; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 2px; cursor: pointer; transition: opacity 0.2s; }
+.btn:hover { opacity: 0.8; }
+.btn-p { background: var(--orange); color: #fff; }
+.btn-s { background: var(--border); color: var(--muted); }
+
+/* NAME MODAL */
+.name-modal { background: var(--panel2); border: 1px solid var(--gold); border-radius: 12px; padding: 24px; width: 300px; }
+.name-modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(--gold); margin-bottom: 14px; }
+.ig { margin-bottom: 10px; }
+.ig label { display: block; font-size: 0.65rem; letter-spacing: 2px; color: var(--muted); margin-bottom: 4px; }
+.ig input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: var(--text);
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; }
+.ig input:focus { outline: none; border-color: var(--gold); }
+
+.update-btn { position: fixed; bottom: 10px; right: 10px; z-index: 50;
+  background: var(--orange); border: none; color: #fff; font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px; font-size: 0.75rem; padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; }
+.update-btn:hover { opacity: 0.85; }
+.names-btn { position: fixed; bottom: 10px; left: 10px; z-index: 50;
+  background: var(--panel); border: 1px solid var(--border); color: var(--muted); font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px; font-size: 0.7rem; padding: 5px 11px; border-radius: 5px; cursor: pointer; transition: all 0.2s; }
+.names-btn:hover { border-color: var(--gold); color: var(--gold); }
+.reset-btn { position: fixed; bottom: 10px; right: 120px; z-index: 50;
+  background: var(--panel); border: 1px solid var(--border); color: var(--muted); font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px; font-size: 0.7rem; padding: 5px 11px; border-radius: 5px; cursor: pointer; transition: all 0.2s; }
+.reset-btn:hover { border-color: #ff4444; color: #ff4444; }
+</style>
+</head>
+<body>
+<div class="grid"></div>
+
+<!-- SCORE UPDATE MODAL -->
+<div class="overlay" id="scoreOverlay">
+  <div class="modal">
+    <h2>UPDATE SCORES</h2>
+    <div class="modal-sub">ENTER EACH REP'S VALID XFERS (5-MIN+ TPV)</div>
+    <div class="rep-inputs" id="repInputs"></div>
+    <div class="mbtns">
+      <button class="btn btn-s" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-p" onclick="saveScores()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div class="overlay" id="nameOverlay">
+  <div class="name-modal">
+    <h2>🏀 TEAM NAMES</h2>
+    <div class="ig"><label style="color:var(--teamA)">🟠 TEAM A NAME</label><input id="nameA" type="text" placeholder="TEAM A" maxlength="14"></div>
+    <div class="ig"><label style="color:var(--teamB)">🔵 TEAM B NAME</label><input id="nameB" type="text" placeholder="TEAM B" maxlength="14"></div>
+    <div class="mbtns">
+      <button class="btn btn-s" onclick="closeNames()">CANCEL</button>
+      <button class="btn btn-p" style="background:var(--gold);color:#000" onclick="saveNames()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="header">
+    <div class="h-left">
+      <span class="ball">🏀</span>
+      <div>
+        <div class="h-title">TRANSFER MADNESS <span style="font-size:0.5em;color:var(--gold)">2026</span></div>
+        <div class="h-sub">TEAM LEADERBOARD · 5-MIN+ TPV ONLY</div>
+      </div>
+    </div>
+    <div class="team-totals">
+      <div class="total-card A">
+        <div class="tc-name" id="tcNameA">TEAM A</div>
+        <div class="tc-num" id="tcNumA">0</div>
+        <div class="tc-lbl">TOTAL XFERS</div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="total-card B">
+        <div class="tc-name" id="tcNameB">TEAM B</div>
+        <div class="tc-num" id="tcNumB">0</div>
+        <div class="tc-lbl">TOTAL XFERS</div>
+      </div>
+    </div>
+    <div style="font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-align:right">
+      <div id="hDate" style="font-size:0.85rem;color:var(--text)"></div>
+      <div>CLICK UPDATE SCORES TO ENTER</div>
+    </div>
+  </div>
+
+  <div class="teams-grid">
+    <div class="team-col" id="teamACol"></div>
+    <div class="team-col" id="teamBCol"></div>
+  </div>
+
+  <div class="fa-section" id="faSection"></div>
+
+  <div class="bottom-bar">
+    <div class="bb-hint">VALID XFERS = 5-MIN+ TPV ONLY · ALL SCORES UPDATE WEEKLY</div>
+    <div class="bb-brick" id="brickDisplay"></div>
+    <div class="bb-date" id="bbDate"></div>
+  </div>
+</div>
+
+<button class="update-btn" onclick="openModal()">📊 UPDATE SCORES</button>
+<button class="names-btn" onclick="openNames()">✏️ TEAM NAMES</button>
+<button class="reset-btn" onclick="confirmReset()">↺ RESET</button>
+
+<script>
+const REPS = [
+  {name:'Sean Buendia',     team:'A', seed:1},
+  {name:'Nathan Kerwick',   team:'A', seed:4},
+  {name:'Baris Banks',      team:'A', seed:5},
+  {name:'Aaron Scott',      team:'A', seed:8},
+  {name:'Travis Wells',     team:'A', seed:9},
+  {name:'Rachel Abraira',   team:'A', seed:12},
+  {name:'Andrew Causa',     team:'A', seed:14},
+  {name:'Eric Corley',      team:'B', seed:2},
+  {name:'Teresa Leo',       team:'B', seed:3},
+  {name:'Brandon Tharp',    team:'B', seed:6},
+  {name:'Thomas Houge',     team:'B', seed:7},
+  {name:'Bere Johnson-Smith',team:'B',seed:11},
+  {name:'Roger Logan',      team:'B', seed:13},
+  {name:'Alisa Kobelev',    team:'F', seed:10},
+];
+
+let ST = {
+  names: {A:'TEAM A', B:'TEAM B'},
+  scores: {},  // name -> xfer count
+  brickAward: null,
+};
+
+// init scores
+REPS.forEach(r => { if(!ST.scores[r.name]) ST.scores[r.name] = 0; });
+
+function getScore(name) { return ST.scores[name] || 0; }
+
+function renderAll() {
+  const teamA = REPS.filter(r=>r.team==='A');
+  const teamB = REPS.filter(r=>r.team==='B');
+  const floaters = REPS.filter(r=>r.team==='F');
+
+  // Sort by score desc
+  const sortedA = [...teamA].sort((a,b)=>getScore(b.name)-getScore(a.name));
+  const sortedB = [...teamB].sort((a,b)=>getScore(b.name)-getScore(a.name));
+
+  const totalA = teamA.reduce((s,r)=>s+getScore(r.name),0);
+  const totalB = teamB.reduce((s,r)=>s+getScore(r.name),0);
+  const maxScore = Math.max(...REPS.map(r=>getScore(r.name)),1);
+
+  // Header totals
+  document.getElementById('tcNameA').textContent = ST.names.A;
+  document.getElementById('tcNameB').textContent = ST.names.B;
+  document.getElementById('tcNumA').textContent = totalA;
+  document.getElementById('tcNumB').textContent = totalB;
+  document.getElementById('hDate').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+  document.getElementById('bbDate').textContent = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  // Lead tag
+  // Team A col
+  buildTeamCol('teamACol', ST.names.A, 'A', sortedA, totalA, maxScore);
+  buildTeamCol('teamBCol', ST.names.B, 'B', sortedB, totalB, maxScore);
+
+  // Free agents
+  const fa = document.getElementById('faSection');
+  if(floaters.length) {
+    fa.innerHTML = `
+      <div class="fa-header">
+        <span class="fa-title">⭐ FREE AGENT</span>
+        <div class="fa-reps">
+          ${floaters.map(r=>`<div class="fa-rep"><span class="fa-name">${r.name}</span><span class="fa-score" style="margin-left:8px">${getScore(r.name)}</span></div>`).join('')}
+        </div>
+      </div>`;
+  } else fa.innerHTML='';
+
+  // Brick award
+  const brickEl = document.getElementById('brickDisplay');
+  if(ST.brickAward) brickEl.textContent = `🧱 BRICK AWARD: ${ST.brickAward.toUpperCase()}`;
+  else brickEl.textContent = '';
+}
+
+function buildTeamCol(id, name, team, reps, total, maxScore) {
+  const col = document.getElementById(id);
+  const medals = ['🥇','🥈','🥉'];
+
+  let html = `
+    <div class="team-col-header ${team}">
+      <div>
+        <div class="tch-name">${team==='A'?'🟠':'🔵'} ${name}</div>
+        <div class="tch-lbl">TOTAL XFERS</div>
+      </div>
+      <div class="tch-total">${total}</div>
+    </div>
+    <div class="rep-list">`;
+
+  reps.forEach((r, i) => {
+    const score = getScore(r.name);
+    const pct = maxScore > 0 ? Math.round((score/maxScore)*100) : 0;
+    const isTop = i === 0 && score > 0;
+    const medal = medals[i] || '';
+    html += `
+      <div class="rep-row ${team}${isTop?' top-rep':''}">
+        <div class="rep-rank">${medal || (i+1)}</div>
+        <div class="rep-bar-wrap">
+          <div class="rep-name-row">
+            <span class="rep-name">${r.name}${isTop?'<span class="crown">👑</span>':''}</span>
+            <span class="rep-score">${score}</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill ${team}" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  col.innerHTML = html;
+}
+
+// MODAL
+function openModal() {
+  const container = document.getElementById('repInputs');
+  container.innerHTML = '';
+  REPS.filter(r=>r.team!=='F').forEach(r => {
+    const row = document.createElement('div');
+    row.className = `rep-input-row ${r.team}`;
+    row.innerHTML = `<span class="rir-name">${r.team==='A'?'🟠':'🔵'} ${r.name}</span><input class="rir-input" type="number" min="0" value="${getScore(r.name)}" data-name="${r.name}">`;
+    container.appendChild(row);
+  });
+  // Floaters
+  REPS.filter(r=>r.team==='F').forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'rep-input-row';
+    row.innerHTML = `<span class="rir-name">⭐ ${r.name}</span><input class="rir-input" type="number" min="0" value="${getScore(r.name)}" data-name="${r.name}">`;
+    container.appendChild(row);
+  });
+  document.getElementById('scoreOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('scoreOverlay').classList.remove('open'); }
+
+function saveScores() {
+  document.querySelectorAll('.rir-input').forEach(input => {
+    const name = input.dataset.name;
+    const val = parseInt(input.value);
+    if(!isNaN(val) && val >= 0) ST.scores[name] = val;
+  });
+  // Update brick award — lowest non-zero scorer
+  let worst=null, worstScore=Infinity;
+  REPS.filter(r=>r.team!=='F').forEach(r=>{
+    const s=getScore(r.name);
+    if(s < worstScore && s >= 0){ worstScore=s; worst=r.name; }
+  });
+  ST.brickAward = worst;
+  save(); closeModal(); renderAll();
+}
+
+// NAME MODAL
+function openNames() {
+  document.getElementById('nameA').value = ST.names.A;
+  document.getElementById('nameB').value = ST.names.B;
+  document.getElementById('nameOverlay').classList.add('open');
+}
+function closeNames() { document.getElementById('nameOverlay').classList.remove('open'); }
+function saveNames() {
+  const a = document.getElementById('nameA').value.trim().toUpperCase();
+  const b = document.getElementById('nameB').value.trim().toUpperCase();
+  if(a) ST.names.A = a;
+  if(b) ST.names.B = b;
+  save(); closeNames(); renderAll();
+}
+
+function save() { try{localStorage.setItem('tm2026_lb',JSON.stringify(ST));}catch(e){} }
+function load() { try{const s=localStorage.getItem('tm2026_lb');if(s){ST=JSON.parse(s);return true;}}catch(e){}return false; }
+function confirmReset() { if(confirm('Reset all scores?')){localStorage.removeItem('tm2026_lb');location.reload();} }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeNames();}
+  if(e.key==='Enter'&&document.getElementById('scoreOverlay').classList.contains('open'))saveScores();
+});
+
+// Auto-refresh time every minute
+setInterval(()=>{
+  document.getElementById('bbDate').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+},60000);
+
+if(!load()){
+  REPS.forEach(r=>{ST.scores[r.name]=0;});
+  save();
+}
+renderAll();
+if(ST.names.A==='TEAM A'&&ST.names.B==='TEAM B') setTimeout(()=>openNames(),600);
+</script>
+</body>
+</html>
