@@ -227,20 +227,19 @@ function parseGViz(text) {
 }
 
 const REPS_META = {
-  'Sean Buendia':      {seed:1,  team:'A'},
-  'Nathan Kerwick':    {seed:4,  team:'A'},
-  'Baris Banks':       {seed:5,  team:'A'},
-  'Aaron Scott':       {seed:8,  team:'A'},
-  'Travis Wells':      {seed:9,  team:'A'},
-  'Rachel Abraira':    {seed:12, team:'A'},
-  'Andrew Causa':      {seed:14, team:'A'},
-  'Eric Corley':       {seed:2,  team:'B'},
-  'Teresa Leo':        {seed:3,  team:'B'},
+  'Eric Corley':       {seed:1,  team:'A'},
+  'Teresa Leo':        {seed:2,  team:'B'},
+  'Baris Banks':       {seed:3,  team:'A'},
+  'Nathan Kerwick':    {seed:4,  team:'B'},
+  'Aaron Scott':       {seed:5,  team:'A'},
   'Brandon Tharp':     {seed:6,  team:'B'},
-  'Thomas Houge':      {seed:7,  team:'B'},
-  'Bere Johnson-Smith':{seed:11, team:'B'},
-  'Roger Logan':       {seed:13, team:'B'},
-  'Alisa Kobelev':     {seed:10, team:'F'},
+  'Travis Wells':      {seed:7,  team:'A'},
+  'Thomas Houge':      {seed:8,  team:'A'},
+  'Rachel Abraira':    {seed:9,  team:'A'},
+  'Bere Johnson-Smith':{seed:10, team:'B'},
+  'Andrew Causa':      {seed:11, team:'B'},
+  'Roger Logan':       {seed:12, team:'B'},
+  'Tammie Steele':     {seed:13, team:'F'},
 };
 
 let teamNames = {A:'TEAM A', B:'TEAM B'};
@@ -317,29 +316,29 @@ function buildBracket(){
   const lc=document.createElement('div'); lc.className='rounds';
   const rc=document.createElement('div'); rc.className='rounds'; rc.style.flexDirection='row-reverse';
 
-  // R1: split by index — left gets 0,3,4,6; right gets 1,2,5
-  const r1L=r1.filter((_,i)=>[0,3,4,6].includes(i));
-  const r1R=r1.filter((_,i)=>[1,2,5].includes(i));
-  // Always build all rounds — use TBD placeholders if no data yet
-  const emptyMatch = {repA:null,repB:null,seedA:null,seedB:null,tA:null,tB:null,scoreA:0,scoreB:0,winner:null,bye:false};
+  const emptyMatch={repA:null,repB:null,seedA:null,seedB:null,tA:null,tB:null,scoreA:0,scoreB:0,winner:null,bye:false};
 
-  const r2Final = r2.length ? r2 : [emptyMatch,emptyMatch,emptyMatch,emptyMatch];
-  const r3Final = r3.length ? r3 : [emptyMatch,emptyMatch];
+  // Dynamic split — always split any round evenly left/right
+  function splitRound(matches, minCount) {
+    const filled = matches.length ? matches : Array(minCount).fill(emptyMatch);
+    const half = Math.ceil(filled.length / 2);
+    return [filled.slice(0, half), filled.slice(half)];
+  }
 
-  const r2L=r2Final.slice(0,2);
-  const r2R=r2Final.slice(2,4);
-  const r3L=r3Final.slice(0,1);
-  const r3R=r3Final.slice(1,2);
+  const [r1L, r1R] = splitRound(r1, 4);
+  const [r2L, r2R] = splitRound(r2, 4);
+  const [r3L, r3R] = splitRound(r3, 2);
 
-  lc.appendChild(buildCol(r1L,'ROUND OF 14','left'));
-  lc.appendChild(buildCol(r2L,'QUARTERS','left'));
-  lc.appendChild(buildCol(r3L,'SEMIS','left'));
-  rc.appendChild(buildCol(r1R,'ROUND OF 14','right'));
-  rc.appendChild(buildCol(r2R,'QUARTERS','right'));
-  rc.appendChild(buildCol(r3R,'SEMIS','right'));
+  const roundName1 = `ROUND OF ${r1.length ? r1.length * 2 : 14}`;
+  const roundName2 = r2.length > 4 ? `ROUND OF ${r2.length * 2}` : 'QUARTERS';
+  const roundName3 = 'SEMIS';
 
-  left.appendChild(lc);
-  right.appendChild(rc);
+  lc.appendChild(buildCol(r1L, roundName1, 'left'));
+  lc.appendChild(buildCol(r2L, roundName2, 'left'));
+  lc.appendChild(buildCol(r3L, roundName3, 'left'));
+  rc.appendChild(buildCol(r1R, roundName1, 'right'));
+  rc.appendChild(buildCol(r2R, roundName2, 'right'));
+  rc.appendChild(buildCol(r3R, roundName3, 'right'));
 }
 
 function buildCol(matches,label,side){
